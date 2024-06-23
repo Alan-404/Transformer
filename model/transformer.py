@@ -32,7 +32,7 @@ class Transformer(nn.Module):
         if y_lengths is not None:
             look_ahead_mask = generate_look_ahead_mask(y_lengths).unsqueeze(1)
         else:
-            look_ahead_mask = torch.ones((batch_size, 1, y_ctx, y_ctx), dtype=torch.bool, device=y.device)
+            look_ahead_mask = torch.tril(torch.ones((y_ctx, y_ctx), dtype=torch.bool, device=y.device)).unsqueeze(0).repeat((batch_size, 1, 1, 1))
 
         x = self.encoder(x, padding_mask)
         y = self.decoder(y, x, look_ahead_mask, padding_mask)
